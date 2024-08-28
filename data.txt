@@ -1,0 +1,38 @@
+https://docs.devexpress.com/XPO/DevExpress.Xpo.XPView
+https://docs.devexpress.com/CoreLibraries/2129/devexpress-data-library/criteria-operators
+
+using DevExpress.Xpo;
+
+public class Product : XPObject {
+    public Product(Session session) : base(session) { }
+    
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+}
+Tworzenie XPView:
+CopyReplit
+using DevExpress.Xpo;
+using DevExpress.Xpo.DB;
+
+public class ProductView {
+    public void CreateProductView(Session session) {
+        // Tworzymy XPView i definiujemy źródło danych
+        XPView view = new XPView(session, typeof(Product));
+
+        // Dodajemy kolumny, które chcemy uwzględnić w widoku
+        view.Properties.Add(new ViewProperty("Name", SortType.None, "[Name]", false));
+        view.Properties.Add(new ViewProperty("Price", SortType.None, "[Price]", false));
+
+        // Opcjonalnie, filtry i sortowanie
+        view.Criteria = "[Price] > 50"; // Przykład filtra
+        view.Sorting.Add(new SortingCollection(new SortProperty("Price", SortDirection.Descending)));
+
+        // Ładowanie danych
+        view.Load();
+        
+        // Iteracja po widoku i wyświetlanie wyników
+        foreach (var row in view) {
+            Console.WriteLine($"Product: {row[0]}, Price: {row[1]}");
+        } 
+    }
+}
